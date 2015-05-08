@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
             //Показываем диалог ожидания
             pd = ProgressDialog.show(MainActivity.this, "Working...", "request to server", true, false);
             //Запускаем парсинг
-            new ParseSite().execute("http://www.stackoverflow.com");
+            new ParseSite().execute(String.valueOf(R.string.site_url));
         }
     };
 
@@ -53,13 +53,14 @@ public class MainActivity extends ActionBarActivity {
             try
             {
                 HtmlHelper hh = new HtmlHelper(new URL(arg[0]));
-                List<TagNode> links = hh.getLinksByClass("question-hyperlink");
+                //List<TagNode> links = hh.getLinksByClass("question-hyperlink");
+                List<TagNode> links = hh.getParentsByClass("div11");
                 Log.d(MY_LOG, links.toString());
 
                 for (Iterator<TagNode> iterator = links.iterator(); iterator.hasNext();)
                 {
                     TagNode divElement = (TagNode) iterator.next();
-                    output.add(divElement.getText().toString());
+                    output.add(divElement.findElementByName("a", false).getText().toString());
                     //Log.d(MY_LOG, divElement.getText().toString());
                 }
             }
@@ -77,8 +78,7 @@ public class MainActivity extends ActionBarActivity {
             //Находим ListView
             ListView listview = (ListView) findViewById(R.id.listViewData);
             //Загружаем в него результат работы doInBackground
-            listview.setAdapter(new ArrayAdapter<String>(MainActivity.this,
-                    android.R.layout.simple_list_item_1 , output));
+            listview.setAdapter(new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1 , output));
         }
     }
 

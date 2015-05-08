@@ -5,7 +5,7 @@
     <Button android:id="@+id/parse"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="Получить данные">
+        android:text="@string/button_get">
     </Button>
     <ListView android:id="@+id/listViewData"
         android:layout_height="wrap_content"
