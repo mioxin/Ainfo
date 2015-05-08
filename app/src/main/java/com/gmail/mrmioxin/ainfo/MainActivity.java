@@ -22,7 +22,7 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final String MY_LOG = "My_log";
+    private static final String MY_LOG = "My_log.MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
             //Показываем диалог ожидания
             pd = ProgressDialog.show(MainActivity.this, "Working...", "request to server", true, false);
             //Запускаем парсинг
-            new ParseSite().execute(String.valueOf(R.string.site_url));
+            new ParseSite().execute(getString(R.string.url_site));
         }
     };
 
@@ -52,6 +52,7 @@ public class MainActivity extends ActionBarActivity {
             List<String> output = new ArrayList<String>();
             try
             {
+                Log.d(MY_LOG, "arg[0] - " + arg[0]);
                 HtmlHelper hh = new HtmlHelper(new URL(arg[0]));
                 //List<TagNode> links = hh.getLinksByClass("question-hyperlink");
                 List<TagNode> links = hh.getParentsByClass("div11");

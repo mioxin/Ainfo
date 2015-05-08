@@ -3,6 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="site_url">http://10.17.7.114/?type=1</string>
     <string name="button_get">Получить данные</string>
+    <string name="url_site">http://10.17.7.114/?type=1</string>
 </resources>

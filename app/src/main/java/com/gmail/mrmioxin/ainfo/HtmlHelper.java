@@ -8,6 +8,7 @@ import org.htmlcleaner.TagNode;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,36 +18,41 @@ import java.util.List;
  * Created by palchuk on 29.04.2015.
  */
 public class HtmlHelper {
-    private static final String MY_LOG = "My_log";
+    private static final String MY_LOG = "My_log.HtmlHelper";
     TagNode rootNode;
-    InputStream in;
+    InputStreamReader in;
 
     //Конструктор
     public HtmlHelper(URL htmlPage) throws IOException
     {
         //URL url = new URL("http://www.android.com/");
-        HttpURLConnection urlConnection = (HttpURLConnection) htmlPage.openConnection();
-        Log.d(MY_LOG,urlConnection.getErrorStream ().toString());
-        Log.d(MY_LOG,urlConnection.getHeaderFields().toString());
+        Boolean done = false;
+        int counter = 5;
+        HttpURLConnection urlConnection = null;
+        while (!done || counter == 0) {
+            urlConnection = (HttpURLConnection) htmlPage.openConnection();
+            Log.d(MY_LOG, urlConnection.getErrorStream().toString());
+            Log.d(MY_LOG, urlConnection.getHeaderFields().toString());
 
-        int httpCode = urlConnection.getResponseCode();
-        switch (httpCode) {
-            case 200:
-                Log.d(MY_LOG,"Response 200.");
-                in = new BufferedInputStream(urlConnection.getInputStream());
-                break;
-            case 401:
-                Log.d(MY_LOG,"Response 401.");
-                break;
-            default:
-                Log.d(MY_LOG,"Response "+httpCode+".");
-                in.close ();
-                in = null;
+            int httpCode = urlConnection.getResponseCode();
+            switch (httpCode) {
+                case 200:
+                    Log.d(MY_LOG, "Response 200.");
+                    in = new InputStreamReader(urlConnection.getInputStream());
+                    done = true;
+                    break;
+                case 401:
+                    Log.d(MY_LOG, "Response 401.");
+                    --counter;
+                    break;
+                default:
+                    Log.d(MY_LOG, "Response " + httpCode + ".");
+                    --counter;
+            }
 
+            int length = urlConnection.getContentLength();
         }
-        int length = urlConnection.getContentLength ();
         urlConnection.disconnect();
-
         //Создаём объект HtmlCleaner
         HtmlCleaner cleaner = new HtmlCleaner();
         //Загружаем html код сайта
