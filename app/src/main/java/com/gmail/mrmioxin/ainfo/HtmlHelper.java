@@ -9,6 +9,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,9 +32,12 @@ public class HtmlHelper {
         Boolean done = false;
         int counter = 5;
         HttpURLConnection urlConnection = null;
-        while (!done || counter == 0) {
+        // First set the default cookie manager.
+        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+
+        while (!done || (counter == 0)) {
             urlConnection = (HttpURLConnection) htmlPage.openConnection();
-            Log.d(MY_LOG, urlConnection.getErrorStream().toString());
+
             Log.d(MY_LOG, urlConnection.getHeaderFields().toString());
 
             int httpCode = urlConnection.getResponseCode();
