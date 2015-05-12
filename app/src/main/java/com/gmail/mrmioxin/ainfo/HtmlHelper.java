@@ -58,7 +58,7 @@ public class HtmlHelper {
 
             int length = urlConnection.getContentLength();
         }
-        urlConnection.disconnect();
+        //urlConnection.disconnect();
         //Создаём объект HtmlCleaner
         HtmlCleaner cleaner = new HtmlCleaner();
         //Загружаем html код сайта

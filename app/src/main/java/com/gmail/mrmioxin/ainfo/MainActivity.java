@@ -52,11 +52,10 @@ public class MainActivity extends ActionBarActivity {
             List<String> output = new ArrayList<String>();
             try
             {
-                Log.d(MY_LOG, "arg[0] - " + arg[0]);
                 HtmlHelper hh = new HtmlHelper(new URL(arg[0]));
                 //List<TagNode> links = hh.getLinksByClass("question-hyperlink");
                 List<TagNode> links = hh.getParentsByClass("div11");
-                Log.d(MY_LOG, links.toString());
+                Log.d(MY_LOG, "links: "+links.toString());
 
                 for (Iterator<TagNode> iterator = links.iterator(); iterator.hasNext();)
                 {
