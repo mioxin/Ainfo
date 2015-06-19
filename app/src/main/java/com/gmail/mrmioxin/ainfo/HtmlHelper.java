@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XPatherException;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -65,13 +66,17 @@ public class HtmlHelper {
         rootNode = cleaner.clean(in);
     }
 
-    List<TagNode> getParentsByClass(String CSSClassname)
+    List<TagNode> getParentsByClass(String CSSClassname) throws XPatherException
     {
         List<TagNode> parentList = new ArrayList<TagNode>();
         try {
-            //Object[] nodes = rootNode.evaluateXPath("//td[@class='div18']/parent::*");
-            parentList = (List<TagNode>) rootNode.getElementListByAttValue("class",CSSClassname,true,false);
-
+            Object[] tags = rootNode.evaluateXPath("//tr[td[div[@class='" + CSSClassname + "']]]");
+            Log.d(MY_LOG, "Beginning HTMLparsing..." + tags.length);
+            //parentList = (List<TagNode>) rootNode.getElementListByAttValue("class",CSSClassname,true,false);
+            for (Object t:tags) {
+                parentList.add((TagNode)t);
+                //Log.d(MY_LOG, "tag: "+ t.toString());
+            }
             } catch (Exception e) {
                 e.printStackTrace();
             }
