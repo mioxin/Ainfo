@@ -5,7 +5,8 @@
     <Button android:id="@+id/parse"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="@string/button_get">
+        android:text="@string/button_get"
+        android:visibility="gone">
     </Button>
     <ListView android:id="@+id/listViewData"
         android:layout_height="wrap_content"

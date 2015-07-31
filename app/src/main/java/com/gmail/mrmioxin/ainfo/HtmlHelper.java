@@ -66,11 +66,11 @@ public class HtmlHelper {
         rootNode = cleaner.clean(in);
     }
 
-    List<TagNode> getParentsByClass(String CSSClassname) throws XPatherException
+    List<TagNode> getParentsByClass(String XPath) throws XPatherException
     {
         List<TagNode> parentList = new ArrayList<TagNode>();
         try {
-            Object[] tags = rootNode.evaluateXPath("//tr[td[div[@class='" + CSSClassname + "']]]");
+            Object[] tags = rootNode.evaluateXPath(XPath);
             Log.d(MY_LOG, "Beginning HTMLparsing..." + tags.length);
             //parentList = (List<TagNode>) rootNode.getElementListByAttValue("class",CSSClassname,true,false);
             for (Object t:tags) {
