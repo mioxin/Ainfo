@@ -8,10 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,21 +18,13 @@ import org.htmlcleaner.TagNode;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private static final String MY_LOG = "My_log.MainActivity";
-    // имена атрибутов для Map
-    final String ATTR_DATE = "date";
-    final String ATTR_TITLE = "title";
-    final String ATTR_DESCR = "descr";
-    final String ATTR_IMAGE = "image";
     //CSS классы в HTML
     final String CLASS_DATE = "div16";
     final String CLASS_TITLE = "div11";
@@ -43,9 +33,10 @@ public class MainActivity extends ActionBarActivity {
     final String CLASS_NEXT = "td26";
 
     String strUrlNext= "";
-    ArrayList<Map<String, Object>> data_list;
+//    ArrayList<Map<String, Object>> data_list;
+    ArrayList<Article> data_list;
     ListView listview;
-    SimpleAdapter myAdapter;
+    AiListAdapter myAdapter;
     View footer;
     //Диалог ожидания
     private ProgressDialog pd;
@@ -56,25 +47,16 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Находим кнопку
-        Button button = (Button)findViewById(R.id.parse);
         //Находим ListView
         listview = (ListView) findViewById(R.id.listViewData);
-        // массив имен атрибутов, из которых будут читаться данные
-        String[] from = { ATTR_DATE, ATTR_TITLE, ATTR_DESCR, ATTR_IMAGE};
-        // массив ID View-компонентов, в которые будут вставлять данные
-        int[] to = { R.id.tvDate, R.id.tvTitle, R.id.tvDescr, R.id.imageView };
-        data_list = new ArrayList<Map<String, Object>>();
-
-        //Регистрируем onClick слушателя
-        button.setOnClickListener(myListener);
+        data_list = new ArrayList<Article>();//<Map<String, Object>>();
         // создание Footer
         footer = getLayoutInflater().inflate(R.layout.footer, null);
-        progress_bar = (ProgressBar) footer.findViewById(R.id.progressBar);
         tvFooter = (TextView) footer.findViewById(R.id.tv_Footer);
+        progress_bar = (ProgressBar) footer.findViewById(R.id.progressBar);
         //add footer
         listview.addFooterView(footer);
-        myAdapter = new SimpleAdapter(MainActivity.this, data_list, R.layout.item, from, to);
+        myAdapter = new AiListAdapter(MainActivity.this, data_list);
         listview.setAdapter(myAdapter);
 
         new ParseSite().execute(getString(R.string.url_site));
@@ -94,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         new ParseSite().execute(strUrlNext);
     }
 
-    private class ParseSite extends AsyncTask<String, Void, ArrayList<Map<String, Object>>> {
+    private class ParseSite extends AsyncTask<String, Void, ArrayList<Article>> {
         String surlNext;
         protected void onPreExecute() {
             super.onPreExecute();
@@ -102,41 +84,30 @@ public class MainActivity extends ActionBarActivity {
             progress_bar.setVisibility(View.VISIBLE);
         }
         //Фоновая операция
-        protected ArrayList<Map<String, Object>> doInBackground(String... arg) {
-            //List<String> output = new ArrayList<String>();
-            ArrayList<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
-            Map<String, Object> m;
+        protected ArrayList<Article> doInBackground(String... arg) {
+            //ArrayList<Map<String, Object>> output = new ArrayList<Map<String, Object>>();
+            ArrayList<Article> output = new ArrayList<Article>();
             try {
                 URL url = new URL(arg[0]);
                 HtmlHelper hh = new HtmlHelper(url);
                 List<TagNode> elem = hh.getParentsByClass("//tr[td[div[@class='" + CLASS_IMG + "']]]");
                 List<TagNode> urlNext = hh.getParentsByClass("//td[@class='" + CLASS_NEXT + "']");
-                Log.d(MY_LOG, "urlNext.length: " + urlNext.size());
-                Log.d(MY_LOG, "Url next name: " + urlNext.get(0).findElementByAttValue("class", "ln7", true, false).getAttributeByName("href"));
 
                 for (Iterator<TagNode> iterator = elem.iterator(); iterator.hasNext(); ) {
-                    m = new HashMap<String, Object>();
                     TagNode element = (TagNode) iterator.next();
-                    m.put(ATTR_TITLE, element.findElementByAttValue("class", CLASS_TITLE, true, false).getText());
-                    m.put(ATTR_DESCR, getContent(element.findElementByAttValue("class", CLASS_DESCR, true, false)).trim());//.getText());
                     String s_date = getContent(element.findElementByAttValue("class", CLASS_DATE, true, false)).trim();
-
-                    m.put(ATTR_DATE, s_date.substring(0, (s_date.indexOf(" 20") > 0) ? s_date.indexOf(" 20") + 5 : 10));
-                    m.put(ATTR_IMAGE, 0); //
-                    //Log.d(MY_LOG, "element:" + element.findElementByAttValue("class", CLASS_IMG, true, false).findElementByAttValue("src",".jpg",true,false).getText());
                     Log.d(MY_LOG, "image:" + new URL(url, element.findElementByAttValue("class", CLASS_IMG, true, false).findElementByName("img", false).getAttributeByName("src")).toString());
-                    output.add(m);
-                    //Log.d(MY_LOG, divElement.getText().toString());
+                    output.add(new Article(s_date.substring(0, (s_date.indexOf(" 20") > 0) ? s_date.indexOf(" 20") + 5 : 10)
+                            , element.findElementByAttValue("class", CLASS_TITLE, true, false).getText().toString()
+                            , getContent(element.findElementByAttValue("class", CLASS_DESCR, true, false)).trim()
+                            , new URL(url, element.findElementByAttValue("class", CLASS_IMG, true, false).findElementByName("img", false).getAttributeByName("src"))
+                            , false));
                 }
-
                 for (Iterator<TagNode> iterator = urlNext.iterator(); iterator.hasNext(); ) {
                     TagNode element = (TagNode) iterator.next();
-                    Log.d(MY_LOG, "1.Next: " + element.findElementByAttValue("class", "ln7", true, false).getText().toString().trim() +
-                            " *" + element.findElementByAttValue("class", "ln7", true, false).getText().toString().contains("Туда")+"* ");
-
                     if (element.findElementByAttValue("class", "ln7", true, false).getText().toString().contains("Туда")) {
                         surlNext = (new URL(url, element.findElementByAttValue("class", "ln7", true, false).getAttributeByName("href"))).toString();
-                        Log.d(MY_LOG,"2.Next. Link: " + surlNext);
+                        Log.d(MY_LOG,"Next Link: " + surlNext);
                     }
                 }
             }
@@ -158,7 +129,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         //Событие по окончанию парсинга
-        protected void onPostExecute(ArrayList<Map<String, Object>> output) {
+        protected void onPostExecute(ArrayList<Article> output) {
  //добавляем данные в массив для адаптера
             if (!data_list.addAll(output)) {
                 Toast.makeText(MainActivity.this, "Новые данные не добавились.",Toast.LENGTH_SHORT).show();
