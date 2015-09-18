@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 /**
  * Created by palchuk on 05.08.2015.
+ * Agroinform progect
  */
 public class AiListAdapter extends BaseAdapter {
     private static final String MY_LOG = "My_log.Adapter";
@@ -76,14 +77,18 @@ public class AiListAdapter extends BaseAdapter {
                     .into(imageView, new Callback() {
                         @Override
                         public void onSuccess() {
-                            Log.d(MY_LOG,"Loading is success " + img_url);
+                            //Log.d(MY_LOG,"Loading is success " + img_url);
                         }
 
                         @Override
                         public void onError() {
-                            Log.d(MY_LOG,"Loading is failed " + img_url);
+                            //Log.d(MY_LOG,"Loading is failed " + img_url);
                         }
                     });
         return view;
+    }
+
+    public String getTitleArticle(int position) {
+        return objects.get(position).Title;
     }
 }

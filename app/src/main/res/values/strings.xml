@@ -7,4 +7,9 @@
     <string name="url_site">http://10.17.7.114/?type=1</string>
     <string name="img_description">img</string>
     <string name="footer_text">Еще</string>
+    <string name="title_activity_article">Статья</string>
+    <string name="Linearlayout_content_description">Image of article</string>
+    <string name="img_content_description">Image of article</string>
+    <string name="ArticleProgressDialogTitle">Загружаем статью</string>
+    <string name="ArticleProgressDialogButtonNegative">Отмена</string>
 </resources>

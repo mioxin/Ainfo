@@ -10,14 +10,15 @@
         android:id="@+id/imageView"
         android:contentDescription="@string/img_description"
         android:src="@mipmap/ic_launcher"
-        android:layout_weight="0" />
+        android:layout_weight="0"
+        android:focusable="false" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:clickable="true">
+        android:focusable="false">
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,24 +26,27 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
             android:id="@+id/tvDate"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:textColor="@android:color/holo_blue_dark"
+            android:focusable="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
             android:text="Large Text"
             android:id="@+id/tvTitle"
             android:layout_gravity="center_horizontal"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:focusable="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
             android:text="Medium Text"
             android:id="@+id/tvDescr"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:focusable="false" />
     </LinearLayout>
 
     <CheckBox
@@ -50,6 +54,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/checkBox"
         android:layout_weight="0"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:focusable="false" />
 
 </LinearLayout>
