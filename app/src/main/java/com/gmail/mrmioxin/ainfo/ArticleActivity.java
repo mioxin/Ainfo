@@ -1,5 +1,6 @@
 package com.gmail.mrmioxin.ainfo;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -7,15 +8,26 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.os.AsyncTask;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.TagNode;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -31,36 +43,39 @@ public class ArticleActivity extends ActionBarActivity {
     ImageView img;
     String sTitle;
     String sUrl;
+    ViewGroup.LayoutParams lpView;
+    LinearLayout linLayout;
+    ScrollView scrollView;
+    //Picasso mPicasso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
         tvTitle = (TextView)findViewById(R.id.tvTitle);
-        tvContent = (TextView)findViewById(R.id.tvContent);
-        img = (ImageView) findViewById(R.id.img);
+        linLayout = (LinearLayout) findViewById(R.id.linLayout);
+        //scrollView = (ScrollView) findViewById(R.id.scrollView);
 
         Intent intent = getIntent();
         Log.d(MY_LOG, "title: "+intent.getStringExtra("title")+"; href: "+intent.getStringExtra("href"));
-        //long id = intent.getLongExtra("ROW_ID", 0);// long id);
-        //Article item = (Article) data_list.get(id);
         sTitle = intent.getStringExtra("title");
         sUrl = intent.getStringExtra("href");
         tvTitle.setText(sTitle);
-        //tvContent.setText(sUrl);
+        lpView = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT);
         new Download().execute(sUrl);
     }
 
     protected class Download extends AsyncTask<String, Void, ArrayList<Download.item_e>>{
+        URL url;
+        Picasso mPicasso;
+
         protected class item_e {
             String type;
             String cont;
-
             public item_e(String t, String c) {
                 this.type = t;
                 this.cont = c;
             }
-
             String getType() {
                 return type;
             }
@@ -89,19 +104,18 @@ public class ArticleActivity extends ActionBarActivity {
             ArrayList<item_e> output = new ArrayList<>();
             ArrayList<TagNode> elem = new ArrayList<>();
             try {
-                URL url = new URL(params[0]);
+                url = new URL(params[0]);
                 HtmlHelper hh = new HtmlHelper(url);
                 elem.addAll(hh.getParentsByClass("//div[@id='" + ID_IMG + "']/div[@class='" + CLASS_IMG +"']/img"));
                 elem.addAll(hh.getParentsByClass("//div[@class='" + CLASS_CONTENT + "']/*"));
 
-                TagNode[] tn;
                 for (TagNode member:elem) {
                     if ("img".equals(member.getName())) {
                         output.add(new item_e(member.getName(), member.getAttributeByName("src")));
                         Log.d(MY_LOG, "Image src: " + member.getAttributeByName("src"));
                     }
                     else {
-                        String content = member.getText().toString();
+                        String content = member.getText().toString();// getText() захватывает текст Java Script
                         if (content.length()>1)  {
                             output.add(new item_e("text", content));
                             Log.d(MY_LOG, "Type of mem: " + member.getName() + "; Content: " + member.getText());
@@ -139,17 +153,51 @@ public class ArticleActivity extends ActionBarActivity {
 
         protected void onPostExecute(ArrayList<item_e> output) {
             Log.d(MY_LOG, "Count of element: " + output.size());
+            mPicasso = Picasso.with(ArticleActivity.this);
+            mPicasso.setIndicatorsEnabled(true);
+            try {
             for (item_e ie:output) {
                 String name = ie.getType();
                 String cont = ie.getCont();
                 switch (name) {
                     case "img":
+                        LayoutInflater inflater = getLayoutInflater();
+                        FrameLayout fl = (FrameLayout)inflater.inflate(R.layout.frame_article_img, null, true) ;
+                        ImageView iv = (ImageView) fl.findViewById(R.id.iv);
+                        final ProgressBar pb = (ProgressBar) fl.findViewById(R.id.pb);
+
+                        linLayout.addView(fl);
+                        Log.d(MY_LOG, "Switch img: " + cont);
+                        mPicasso.load(new URL(url, cont).toString())
+                                .error(R.mipmap.ic_launcher)
+                                .placeholder(R.mipmap.ic_launcher)
+                                .into(iv, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        //Log.d(MY_LOG,"Loading is success " + cont);
+                                        pb.setVisibility(ProgressBar.GONE);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        //Log.d(MY_LOG,"Loading is failed " + cont);
+                                    }
+                                });
+
                         break;
                     case "text":
-
+                        TextView tvParagr = new TextView(ArticleActivity.this);
+                        tvParagr.setText(cont);
+                        tvParagr.setLayoutParams(lpView);
+                        linLayout.addView(tvParagr);
+                        Log.d(MY_LOG, "Switch text: " + cont);
                         break;
                 }
             }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
             progressd.dismiss();
         }
     }

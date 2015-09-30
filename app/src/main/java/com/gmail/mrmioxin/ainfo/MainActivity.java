@@ -2,7 +2,6 @@ package com.gmail.mrmioxin.ainfo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.LabeledIntent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,13 +14,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.TagNode;
-
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -121,8 +117,6 @@ public class MainActivity extends ActionBarActivity {
 
                 for (TagNode element : elem) {
                     String s_date = getContent(element.findElementByAttValue("class", CLASS_DATE, true, false)).trim();
-                    //Log.d(MY_LOG, "image:" + new URL(url, element.findElementByAttValue("class", CLASS_IMG, true, false).findElementByName("img", false).getAttributeByName("src")).toString());
-                    //Log.d(MY_LOG, "href:" + new URL(url, element.findElementByAttValue("class", CLASS_TITLE, true, false).findElementByAttValue("class", "ln7", true, false).getAttributeByName("href")).toString());
                     output.add(new Article(s_date.substring(0, (s_date.indexOf(" 20") > 0) ? s_date.indexOf(" 20") + 5 : 10)
                             , element.findElementByAttValue("class", CLASS_TITLE, true, false).getText().toString()
                             , getContent(element.findElementByAttValue("class", CLASS_DESCR, true, false)).trim()
