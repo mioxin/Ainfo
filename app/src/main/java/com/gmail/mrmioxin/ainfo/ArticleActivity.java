@@ -93,7 +93,7 @@ public class ArticleActivity extends ActionBarActivity {
             progressd.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.ArticleProgressDialogButtonNegative), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Log.d(MY_LOG, "Îòìåíà çàãðóçêè ñòàòüè "+sTitle);
+                    Log.d(MY_LOG, "Cancel download " + sTitle);
                     progressd.dismiss();
                 }
             });
@@ -115,7 +115,7 @@ public class ArticleActivity extends ActionBarActivity {
                         Log.d(MY_LOG, "Image src: " + member.getAttributeByName("src"));
                     }
                     else {
-                        String content = member.getText().toString();// getText() çàõâàòûâàåò òåêñò Java Script
+                        String content = member.getText().toString();// getText() Ð·Ð°Ñ…Ð²Ð°Ñ‚Ñ‹Ð²Ð°ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚ Java Script
                         if (content.length()>1)  {
                             output.add(new item_e("text", content));
                             Log.d(MY_LOG, "Type of mem: " + member.getName() + "; Content: " + member.getText());
