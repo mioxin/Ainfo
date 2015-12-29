@@ -32,17 +32,17 @@ public class MainActivity extends ActionBarActivity  implements android.support.
 
     private static final String MY_LOG = "My_log.MainActivity";
     //CSS классы в HTML
-    final String CLASS_DATE = "div16";
-    final String CLASS_TITLE = "div11";
-    final String CLASS_DESCR = "div18";
-    final String CLASS_IMG = "corner1";
-    final String CLASS_NEXT = "td26";
+//    final String CLASS_DATE     = "div16";
+//    final String CLASS_TITLE    = "div11";
+//    final String CLASS_DESCR    = "div18";
+//    final String CLASS_IMG      = "corner1";
+//    final String CLASS_NEXT     = "td26";
 
     String strUrlNext= "";
 //    ArrayList<Map<String, Object>> data_list;
     ArrayList<Article> data_list;
     ListView listview;
-    //AiListAdapter myAdapter;
+    AiListAdapter myAdapter;
     AiCursorAdapter myCurAdapter;
     View footer;
     //Диалог ожидания
@@ -61,15 +61,15 @@ public class MainActivity extends ActionBarActivity  implements android.support.
         footer = getLayoutInflater().inflate(R.layout.footer, null);
         tvFooter = (TextView) footer.findViewById(R.id.tv_Footer);
         progress_bar = (ProgressBar) footer.findViewById(R.id.progressBar);
-        //myAdapter = new AiListAdapter(MainActivity.this, data_list);
-        myCurAdapter = new AiCursorAdapter(MainActivity.this, null, 0);
+        myAdapter = new AiListAdapter(MainActivity.this, data_list);
+        //myCurAdapter = new AiCursorAdapter(MainActivity.this, null, 0);
         getSupportLoaderManager().initLoader(0, null, this);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(MY_LOG, "onItemClick pos = " + position + "; id = " + id);
-                Article item = (Article)myCurAdapter.getItem(position);//data_list.get(position);
+                Article item = (Article) myAdapter.getItem(position);//data_list.get(position);
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra("href", item.Href.toString());
                 intent.putExtra("title", item.Title);
@@ -79,8 +79,9 @@ public class MainActivity extends ActionBarActivity  implements android.support.
 
         //add footer
         listview.addFooterView(footer);
-        listview.setAdapter(myCurAdapter);
-        new ParseSite().execute(getString(R.string.url_site));
+        listview.setAdapter(myAdapter);
+        //listview.setAdapter(myCurAdapter);
+        new ParseSite().execute(getString(R.string.url_site2));
     }
 
    //Слушатель OnClickListener для нашей кнопки
@@ -198,24 +199,28 @@ public class MainActivity extends ActionBarActivity  implements android.support.
             try {
                 URL url = new URL(arg[0]);
                 HtmlHelper hh = new HtmlHelper(url);
-                List<TagNode> elem = hh.getParentsByClass("//tr[td[div[@class='" + CLASS_IMG + "']]]");
-                List<TagNode> urlNext = hh.getParentsByClass("//td[@class='" + CLASS_NEXT + "']");
+                List<TagNode> elem = hh.getParentsByClass(getString(R.string.xss2_elem));
+                List<TagNode> urlNext = hh.getParentsByClass(getString(R.string.xss2_next));
 
                 for (TagNode element : elem) {
-                    String s_date = getContent(element.findElementByAttValue("class", CLASS_DATE, true, false)).trim();
+                    String s_date = getContent(element.findElementByAttValue("class", getString(R.string.url2_class_date), true, false)).trim();
                     output.add(new Article(s_date.substring(0, (s_date.indexOf(" 20") > 0) ? s_date.indexOf(" 20") + 5 : 10)
-                            , element.findElementByAttValue("class", CLASS_TITLE, true, false).getText().toString()
-                            , getContent(element.findElementByAttValue("class", CLASS_DESCR, true, false)).trim()
-                            , new URL(url, element.findElementByAttValue("class", CLASS_IMG, true, false).findElementByName("img", false).getAttributeByName("src"))
-                            , new URL(url, element.findElementByAttValue("class", CLASS_TITLE, true, false).findElementByAttValue("class", "ln7", true, false).getAttributeByName("href"))
+                            , element.findElementByAttValue("class", getString(R.string.url2_class_title), true, false).getText().toString()
+                            , getContent(element.findElementByAttValue("class", getString(R.string.url2_class_descr), true, false)).trim()
+                            , new URL(url, element.findElementByAttValue("class", getString(R.string.url2_class_img), true, false).findElementByName("img", false).getAttributeByName("src"))
+                            , new URL(url, element.findElementByAttValue("class", getString(R.string.url2_class_title), true, false).findElementByName("a", false).getAttributeByName("href"))
                             , false));
                 }
-                for (TagNode element : urlNext) {
-                    if (element.findElementByAttValue("class", "ln7", true, false).getText().toString().contains("Туда")) {
-                        surlNext = (new URL(url, element.findElementByAttValue("class", "ln7", true, false).getAttributeByName("href"))).toString();
-                        Log.d(MY_LOG, "Next Link: " + surlNext);
+                if (urlNext.size() >1) {
+                    for (TagNode element : urlNext) {
+                        if (element.getText().toString().contains("Туда")) {
+                            surlNext = (new URL(url, element.getAttributeByName("href"))).toString();
+                        }
                     }
+                } else {
+                    surlNext = (new URL(url, urlNext.get(0).getAttributeByName("href"))).toString();
                 }
+                Log.d(MY_LOG, "Next Link: " + surlNext);
             }
             catch(Exception e)
             {

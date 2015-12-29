@@ -4,7 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="button_get">Получить данные</string>
-    <string name="url_site">http://10.17.7.114/?type=1</string>
     <string name="img_description">img</string>
     <string name="footer_text">Еще</string>
     <string name="title_activity_article">Статья</string>
@@ -12,4 +11,26 @@
     <string name="img_content_description">Image of article</string>
     <string name="ArticleProgressDialogTitle">Загружаем статью</string>
     <string name="ArticleProgressDialogButtonNegative">Отмена</string>
+<!--для сайта www-int -->
+    <string name="url_site">http://10.17.7.114/?type=1</string>
+    <string name="url1_class_date">div16</string>
+    <string name="url1_class_title">div11</string>
+    <string name="url1_class_descr">div18</string>
+    <string name="url1_class_img">corner1</string>
+    <string name="xss1_href">//div[@class=\'div11\']/a[@class=\'ln7\']</string>
+    <string name="xss1_elem">//tr[td[div[@class=\'corner1\']]]</string>
+    <string name="xss1_next">//td[@class=\'td26\']/a[@class=\'ln7\']</string>
+    <string name="url1_next_text">Туда</string>
+
+    <!--для сайта ria.ru  -->
+    <string name="url_site2">http://ria.ru/lenta/</string>
+    <string name="url2_class_date">list_item_date</string>
+    <string name="url2_class_title">list_item_title</string>
+    <string name="url2_class_descr">list_item_announce</string>
+    <string name="url2_class_img">list_item_img</string>
+    <string name="xss2_href">//div[@class=\'list_item_title\']/a</string>
+    <string name="xss2_elem">//div[@class=\'list_item_content\']</string>
+    <string name="xss2_next">//div[@class=\'list_pagination\']/a[@class=\'list_pagination_next\']</string>
+    <string name="url2_next_text">еще</string>
+
 </resources>
