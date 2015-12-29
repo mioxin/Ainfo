@@ -38,7 +38,7 @@ public class HtmlHelper {
 
         while (!done || (counter == 0)) {
             urlConnection = (HttpURLConnection) htmlPage.openConnection();
-
+            Log.d(MY_LOG,"counter:" + counter);
             Log.d(MY_LOG, urlConnection.getHeaderFields().toString());
 
             int httpCode = urlConnection.getResponseCode();

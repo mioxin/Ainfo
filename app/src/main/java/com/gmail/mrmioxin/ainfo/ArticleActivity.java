@@ -93,7 +93,7 @@ public class ArticleActivity extends ActionBarActivity {
             progressd.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.ArticleProgressDialogButtonNegative), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Log.d(MY_LOG, "Cancel download " + sTitle);
+                    Log.d(MY_LOG, "Отмена загрузки статьи "+sTitle);
                     progressd.dismiss();
                 }
             });
